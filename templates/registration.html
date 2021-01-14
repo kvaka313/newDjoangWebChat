@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+</head>
+<body>
+    {{ error }}
+    <form action="registration_handler" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" name="OK" value="send">
+    </form>
+</body>
+</html>
