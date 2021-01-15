@@ -16,11 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
-from MyWebChat.views import RegistrationView
+from MyWebChat.views import RegistrationView, LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
     path('registration/', RegistrationView.as_view(), name='registration'),
     path('registration_handler', RegistrationView.as_view(), name='registration_handler'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('login_handler', LoginView.as_view(), name='login'),
 ]

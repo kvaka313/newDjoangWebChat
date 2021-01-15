@@ -5,9 +5,9 @@
 </head>
 <body>
     {{ error }}
-    <form action="../login" method="post">
+    <form action="../login_handler" method="post">
         {% csrf_token %}
-        {{ from }}
+        {{ form }}
         <input type="submit" name="OK" value="send">
     </form>
 </body>

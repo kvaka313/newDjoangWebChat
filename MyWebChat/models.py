@@ -5,7 +5,7 @@ class Users(models.Model):
 
 class Credential(Users):
     max_len_cred = 26
-    login = models.CharField(max_len_cred, unique=True)
+    login = models.CharField(max_length = max_len_cred, unique=True)
     password = models.CharField(max_length=20)
     role = models.CharField(max_length=20,  default='user')
 
