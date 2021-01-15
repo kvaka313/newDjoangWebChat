@@ -4,9 +4,10 @@ class Users(models.Model):
     name = models.CharField(max_length=30)
 
 class Credential(Users):
-    login = models.CharField(max_length=20, unique=True)
+    max_len_cred = 26
+    login = models.CharField(max_len_cred, unique=True)
     password = models.CharField(max_length=20)
-    role = models.CharField(max_length=20)
+    role = models.CharField(max_length=20,  default='user')
 
 class Messages(models.Model):
     message = models.CharField(max_length=200)
