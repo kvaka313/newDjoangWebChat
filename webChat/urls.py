@@ -16,8 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
+from MyWebChat.views import RegistrationView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='index.html')),
+    path('registration/', RegistrationView.as_view(), name='registration'),
+    path('registration_handler', RegistrationView.as_view(), name='registration_handler'),
 ]

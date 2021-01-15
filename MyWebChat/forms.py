@@ -1,11 +1,12 @@
-from django.forms import forms
+from django.forms import ModelForm, PasswordInput
+
 from MyWebChat.models import Credential
 
 
-class RegistrationForm(forms.ModelForm):
+class RegistrationForm(ModelForm):
     class Meta:
         model = Credential
-        fields = ['name', 'surname', 'login', 'password']
+        fields = ['name', 'login', 'password']
         widgets = {
-            'password': forms.PasswordInput(),
+            'password': PasswordInput(),
         }
