@@ -32,7 +32,7 @@ class LoginView(FormView):
             if ban is None:
                 return render(request, 'chat.html', {'user': ulogin})
             else:
-                return render(request, 'ban.html', {'user': ulogin})
+                return render(request, 'ban.html', {'login': ulogin})
         else:
             form = self.get_form(LoginView.form_class)
             return render(request, LoginView.template_name, {'form': form})
@@ -52,6 +52,6 @@ class LoginView(FormView):
                 if ban is None:
                     return render(request, 'chat.html', {'user': user_login})
                 else:
-                    return render(request, 'ban.html', {'user': user_login})
+                    return render(request, 'ban.html', {'login': user_login})
             else:
                 return render(request, 'login.html', {'error': 'login incorrect', 'form': LoginForm})
