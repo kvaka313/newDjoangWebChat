@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.views.generic import TemplateView
+
+from MyWebChat.bun import get_all_users, add_user_to_bl, del_user_from_bl
 from MyWebChat.views import RegistrationView, LoginView
 
 urlpatterns = [
@@ -25,4 +27,7 @@ urlpatterns = [
     path('registration_handler', RegistrationView.as_view(), name='registration_handler'),
     path('login/', LoginView.as_view(), name='login'),
     path('login_handler', LoginView.as_view(), name='login'),
+    path('get_users/', get_all_users),
+    path('add_user', add_user_to_bl),
+    path('delete_user/<str:name>/', del_user_from_bl),
 ]

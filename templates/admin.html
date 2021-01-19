@@ -1,9 +1,73 @@
 <!DOCTYPE html>
 <html>
+<html lang="en">
 <head>
-    <title>HomePage</title>
+    <meta charset="UTF-8">
+    <title>admin</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        var root_url = 'http://127.0.0.1:8000';
+        function user_list() {
+             $.ajax({
+                type:'GET',
+                contentType: 'application/json',
+                url: root_url + '/get_users',
+                dataType: 'json',
+                success: function(data, text_status, jq) {
+                    var all_users = data.users;
+                    var output = '<form>' + '\n';
+                    for (var i = 0; i < all_users.length; i++) {
+                        var flag = 'add';
+                        if (all_users[i].blacklist == 'Y') {
+                            flag = 'delete'
+                        }
+                        output += all_users[i].user + '&nbsp;' + "<input type='button' class='type'" +
+                            "id=" + "'" + all_users[i].user + "'" + "value=" + flag + " />" + "<br>"
+                    }
+                    output += '</form>';
+                    document.getElementById("all_users").innerHTML = output;
+                    $(function(){
+                      $(".type")
+                              .on('click', function(){
+                                  var name = $(this).attr('id');
+                                  var action = $(this).attr('value');
+                                  send_request(name, action);
+                      })
+                    })
+                }
+             })
+        }
+        function send_request(name, action){
+            if (action == 'add'){
+                $.ajax({
+                    type:'POST',
+                    contentType: 'application/json',
+                    url: root_url + '/add_user',
+                    data: JSON.stringify({
+                        'user':name
+                    }),
+                    success: function(data, text_status, jq){
+                        user_list()
+                    }
+                })
+            }
+            else {
+                $.ajax({
+                    type:'DELETE',
+                    contentType: 'application/json',
+                    url: root_url + '/delete_user/' + name,
+                    success: function(data, text_status, jq){
+                        user_list()
+                    }
+                })
+            }
+        }
+
+    </script>
 </head>
-<body>
-ADMIN page
+<body onload="user_list()">
+    <div id="all_users">
+
+    </div>
 </body>
 </html>
