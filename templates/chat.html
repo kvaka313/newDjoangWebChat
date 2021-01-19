@@ -4,6 +4,45 @@
     <title>HomePage</title>
 </head>
 <body>
-Chat page
+    Hello, {{ user }}!<br>
+    <table>
+        <tr>
+            <td>
+                messages:<br>
+                <div id="messages"></div>
+            </td>
+            <td>
+                active users:<br>
+                <form>
+                    <textarea id="active_users"></textarea>
+                </form>
+            </td>
+            <td>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form>
+                    <input type="text" id="send_message"/>
+                </form>
+                <form>
+                    <input type="button" onclick="my_send()" value="send"/>
+                </form>
+                <form>
+                    <input type="button" onclick="broadcast()" value="broadcast"/>
+                </form>
+                <form>
+                    <input type="button" onclick="disconnect()" value="disconnect"/>
+                </form>
+
+            </td>
+            <td>
+            </td>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>
