@@ -2,6 +2,81 @@
 <html>
 <head>
     <title>HomePage</title>
+    <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
+    <script type="text/javascript">
+        var sock_js_url = 'http://127.0.0.1:8888/sock';
+        var sock_js = new SockJS(sock_js_url);
+        sock_js.onopen = function(){
+            alert('connection');
+            send_login();
+            send_list();
+        };
+        sock_js.onclose = function(event){
+            if (event.wasClean){
+                alert('close');
+            } else {
+                alert('error');
+                alert('code error:' + event.code + ' reason: ' + event.reason);
+            }
+            exit_send_list();
+        };
+        sock_js.onerror = function(event){
+            alert('error: ' + event.message);
+        };
+        sock_js.onmessage = function(event) {
+            var message = event.data;
+            var message_array = message.split(':');
+            if (message_array[0] == 'broadcast'){
+                var temp = document.getElementById('messages').innerHTML;
+                temp = temp + '<br>' + 'broadcast:' + message_array[1];
+                document.getElementById('messages').innerHTML = temp;
+            }
+            else if (message_array[0] == 'list_active'){
+                document.getElementById('active_users').value = message_array[1];
+            }
+            else if (message_array[0] == 'list_all'){
+                document.getElementById('all_users').value = message_array[1];
+            }
+            else {
+                var temp = document.getElementById('messages').innerHTML;
+                temp = temp + '<br>' + message_array[0] + ': ' + message_array[1];
+                document.getElementById('messages').innerHTML = temp;
+            }
+        }
+        function my_send(){
+            var send_message = document.getElementById('send_message').value;
+            sock_js.send(send_message);
+        }
+
+        function send_login(){
+            sock_js.send('name:' + '{{ user }}');
+        }
+
+        function send_active_list(){
+            sock_js.send('list_active:');
+        }
+
+         function send_list(){
+            active_time = setInterval(send_active_list, 5000);
+        }
+
+         function exit_send_list(){
+            clearInterval(active_time);
+        }
+
+        function disconnect(){
+            sock_js.send('disconnect:');
+            exit_send_list();
+            sock_js.close();
+            window.location = '/index.html';
+        }
+
+        function broadcast() {
+           var send_message = document.getElementById('send_message').value;
+           sock_js.send('broadcast:'+ send_message);
+        }
+
+    </script>
 </head>
 <body>
     Hello, {{ user }}!<br>
@@ -43,6 +118,5 @@
             </td>
         </tr>
     </table>
-
 </body>
 </html>
