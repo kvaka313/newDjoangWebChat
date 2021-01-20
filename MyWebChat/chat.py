@@ -1,6 +1,12 @@
+import os
+import django
 from sockjs.tornado import SockJSConnection
 
 from MyWebChat.models import Messages, Credential
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rest.settings')
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
+django.setup()
 
 
 class SocketHandler(SockJSConnection):
@@ -16,11 +22,13 @@ class SocketHandler(SockJSConnection):
         message_array = message.split(':')
         if message_array[0] == 'name':
             SocketHandler.client_sock[message_array[1]] = self
-            messages = Messages.objects.filter(id_receiver__login=message_array[1])
+            messages = get_messages(message_array[1])
+            print("before for")
             for mes in messages:
                 user = Credential.objects.filter(id=mes.id_sender).first()
                 output = user.login + ':' + mes.message
                 self.send(output)
+            print('after')
             Messages.objects.all().delete()
         elif message_array[0] == 'list_active':
             print('list_active')
@@ -48,3 +56,6 @@ class SocketHandler(SockJSConnection):
                 mes = Messages(id_sender=credential_sender, id_receiver=credential_receiver, message=message_array[1])
                 mes.save()
 
+
+def get_messages(name):
+        return Messages.objects.filter(id_receiver__login=name)
