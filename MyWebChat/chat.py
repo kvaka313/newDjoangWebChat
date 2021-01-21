@@ -4,7 +4,7 @@ import redis
 from sockjs.tornado import SockJSConnection
 
 from MyWebChat.models import Messages, Credential
-from webChat import settings
+from webChat.settings import REDIS_HOST, REDIS_PORT
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rest.settings')
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
