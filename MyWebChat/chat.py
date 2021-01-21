@@ -25,7 +25,7 @@ class SocketHandler(SockJSConnection):
             messages = get_messages(message_array[1])
             print("before for")
             for mes in messages:
-                user = Credential.objects.filter(id=mes.id_sender).first()
+                user = Credential.objects.filter(id=mes.id_sender_id).first()
                 output = user.login + ':' + mes.message
                 self.send(output)
             print('after')
@@ -36,6 +36,14 @@ class SocketHandler(SockJSConnection):
             for key in SocketHandler.client_sock.keys():
                 output += key + '\n'
             self.send(output)
+        elif message_array[0] == 'disconnect':
+            sender_name = None
+            for name, sock in SocketHandler.client_sock.items():
+                if sock == self:
+                    sender_name = name
+                    break
+            del SocketHandler.client_sock[sender_name]
+            self.close()
         elif message_array[0] == 'broadcast':
             output_message = message_array[0] + ':' + message_array[1]
             for client in SocketHandler.client_sock.values():
