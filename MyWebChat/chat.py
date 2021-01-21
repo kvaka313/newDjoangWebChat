@@ -1,8 +1,10 @@
 import os
 import django
+import redis
 from sockjs.tornado import SockJSConnection
 
 from MyWebChat.models import Messages, Credential
+from webChat import settings
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rest.settings')
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -11,6 +13,8 @@ django.setup()
 
 class SocketHandler(SockJSConnection):
     client_sock = {}
+    redis_instance = redis.StrictRedis(host=REDIS_HOST,
+                                       port=REDIS_PORT, db=0)
 
     def on_open(self, request):
         print('socket open')
@@ -28,8 +32,11 @@ class SocketHandler(SockJSConnection):
                 user = Credential.objects.filter(id=mes.id_sender_id).first()
                 output = user.login + ':' + mes.message
                 self.send(output)
-            print('after')
             Messages.objects.all().delete()
+            broadcast_messages = SocketHandler.redis_instance.lrange('broadcast', 0, -1)
+            for br_mes in broadcast_messages:
+                output = 'broadcast:' + str(br_mes)
+                self.send(output)
         elif message_array[0] == 'list_active':
             print('list_active')
             output = 'list_active:'
@@ -45,6 +52,8 @@ class SocketHandler(SockJSConnection):
             del SocketHandler.client_sock[sender_name]
             self.close()
         elif message_array[0] == 'broadcast':
+            SocketHandler.redis_instance.lpush('broadcast', message_array[1])
+            SocketHandler.redis_instance.expire('broadcast', 1000)
             output_message = message_array[0] + ':' + message_array[1]
             for client in SocketHandler.client_sock.values():
                 client.send(output_message)
