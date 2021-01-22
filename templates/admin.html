@@ -8,7 +8,6 @@
         var root_url = 'http://127.0.0.1:8000';
         document.addEventListener("DOMContentLoaded", user_list);
         function user_list() {
-            document.getElementById("all_users").addEventListener("on", user_list);
             $.ajax({
                 type: 'GET',
                 contentType: 'application/json',
