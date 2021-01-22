@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,56 +6,67 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
         var root_url = 'http://127.0.0.1:8000';
+        document.addEventListener("DOMContentLoaded", user_list);
         function user_list() {
-             $.ajax({
-                type:'GET',
+            document.getElementById("all_users").addEventListener("on", user_list);
+            $.ajax({
+                type: 'GET',
                 contentType: 'application/json',
                 url: root_url + '/get_users',
                 dataType: 'json',
-                success: function(data, text_status, jq) {
+                success: function (data, text_status, jq) {
                     var all_users = data.users;
-                    var output = '<form>' + '\n';
+                    document.getElementById("all_users").innerText = "";
                     for (var i = 0; i < all_users.length; i++) {
                         var flag = 'add';
                         if (all_users[i].blacklist == 'Y') {
                             flag = 'delete'
                         }
-                        output += all_users[i].user + '&nbsp;' + "<input type='button' class='type'" +
-                            "id=" + "'" + all_users[i].user + "'" + "value=" + flag + " />" + "<br>"
+                        li_tag = document.createElement("li");
+                        li_tag.innerText = all_users[i].user;
+                        form_tag = document.createElement("form");
+                        input_tag = document.createElement("input");
+                        input_tag.setAttribute("type", "button");
+                        input_tag.setAttribute("id", all_users[i].user);
+                        input_tag.setAttribute("value", flag);
+                        input_tag.addEventListener("click", onClickBtn);
+                        form_tag.appendChild(input_tag);
+                        li_tag.appendChild(form_tag);
+                        document.getElementById("all_users").appendChild(li_tag);
                     }
-                    output += '</form>';
-                    document.getElementById("all_users").innerHTML = output;
-                    $(function(){
-                      $(".type")
-                              .on('click', function(){
-                                  var name = $(this).attr('id');
-                                  var action = $(this).attr('value');
-                                  send_request(name, action);
-                      })
-                    })
+
                 }
-             })
+            })
         }
-        function send_request(name, action){
-            if (action == 'add'){
+
+
+        function onClickBtn(obj) {
+                var input_tag = obj.currentTarget;
+                var user = input_tag.id;
+                var action = input_tag.value;
+                send_request(user, action);
+        }
+
+
+        function send_request(name, action) {
+            if (action == 'add') {
                 $.ajax({
-                    type:'POST',
+                    type: 'POST',
                     contentType: 'application/json',
                     url: root_url + '/add_user',
                     data: JSON.stringify({
-                        'user':name
+                        'user': name
                     }),
-                    success: function(data, text_status, jq){
+                    success: function (data, text_status, jq) {
                         user_list()
                     }
                 })
-            }
-            else {
+            } else {
                 $.ajax({
-                    type:'DELETE',
+                    type: 'DELETE',
                     contentType: 'application/json',
                     url: root_url + '/delete_user/' + name,
-                    success: function(data, text_status, jq){
+                    success: function (data, text_status, jq) {
                         user_list()
                     }
                 })
@@ -65,9 +75,11 @@
 
     </script>
 </head>
-<body onload="user_list()">
-    <div id="all_users">
+<body>
+<div>
+    <ul id="all_users">
 
-    </div>
+    </ul>
+</div>
 </body>
 </html>
